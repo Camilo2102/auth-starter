@@ -1,20 +1,24 @@
 package co.com.webgen.starter.auth.authstarterv2.model;
 
-import co.com.webgen.web.sql.starter.model.AuditSqlModel;
+
+import cloud.webgen.web.starter.sql.model.AuditSqlModel;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Entity(name = "users")
 public class User extends AuditSqlModel {
+
+    private Boolean active;
+
+    @Column(unique = true)
+    private String mail;
 
     @Column(unique = true)
     private String userName;
@@ -27,9 +31,4 @@ public class User extends AuditSqlModel {
             inverseJoinColumns = @JoinColumn(name = "authority_id", referencedColumnName = "id"))
     private List<Authority> authorities;
 
-    public User(String userName, String password, List<Authority> authorities) {
-        this.userName = userName;
-        this.password = password;
-        this.authorities = authorities;
-    }
 }

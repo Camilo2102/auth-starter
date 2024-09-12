@@ -1,11 +1,11 @@
 package co.com.webgen.starter.auth.authstarterv2.controller;
 
+import cloud.webgen.web.starter.exeptions.HttpException;
 import co.com.webgen.starter.auth.authstarterv2.DTO.AuthResponseDTO;
 import co.com.webgen.starter.auth.authstarterv2.DTO.LoginRequestDTO;
 import co.com.webgen.starter.auth.authstarterv2.DTO.RegisterRequestDTO;
-import co.com.webgen.starter.auth.authstarterv2.model.User;
+import co.com.webgen.starter.auth.authstarterv2.DTO.VerifyRequestDTO;
 import co.com.webgen.starter.auth.authstarterv2.service.AuthService;
-import co.com.webgen.web.starter.exeptions.HttpException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponseDTO> register(@RequestBody RegisterRequestDTO registerData){
+    public ResponseEntity<AuthResponseDTO> register(@RequestBody RegisterRequestDTO registerData) throws HttpException {
         return new ResponseEntity<>(this.authService.register(registerData), HttpStatus.OK);
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<Boolean> verify(@RequestBody VerifyRequestDTO verifyData) throws HttpException {
+        return new ResponseEntity<>(this.authService.verify(verifyData), HttpStatus.OK);
     }
 }

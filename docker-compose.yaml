@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: db_admin
       POSTGRES_PASSWORD: R7PXqqH2
     ports:
-      - "5432:5432"
+      - "5430:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -29,8 +29,7 @@ services:
       SPRING_APPLICATION_NAME: webgen-auth-service
       SERVER_PORT: 8080
       EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE: http://192.168.1.6:9091/eureka
-      EUREKA_CLIENT_ENABLED: true
-      HOST: 192.168.1.6
+      EUREKA_CLIENT_ENABLED: false
 
 volumes:
   postgres_data:

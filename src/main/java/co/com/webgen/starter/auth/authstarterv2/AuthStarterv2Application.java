@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class AuthStarterv2Application extends SpringBootServletInitializer {
+public class AuthStarterv2Application {
 
     public static void main(String[] args) {
         SpringApplication.run(AuthStarterv2Application.class, args);

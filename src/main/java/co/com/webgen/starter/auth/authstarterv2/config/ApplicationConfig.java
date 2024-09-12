@@ -1,6 +1,5 @@
 package co.com.webgen.starter.auth.authstarterv2.config;
 
-import co.com.webgen.starter.auth.authstarterv2.model.User;
 import co.com.webgen.starter.auth.authstarterv2.repository.UserRepository;
 import co.com.webgen.starter.auth.authstarterv2.security.SecurityUser;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Optional;
 
 @Configuration
 @RequiredArgsConstructor

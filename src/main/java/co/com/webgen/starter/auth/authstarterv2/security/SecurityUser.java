@@ -23,6 +23,8 @@ public class SecurityUser implements UserDetails {
         return user.getPassword();
     }
 
+    public String getRole() { return user.getRole(); }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getAuthorities().stream().map(SecurityAuthority::new).toList();

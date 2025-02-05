@@ -28,43 +28,53 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
-    private final KafkaTemplate<String, String> kafkaTemplate;
 
     public AuthResponseDTO login(LoginRequestDTO loginData) throws HttpException {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginData.getUserName(), loginData.getPassword()));
+        try {
+            Optional<User> user = userRepository.findByOwnerIdAndUserNameOrMail(loginData.getOwnerId(), loginData.getUserName(), loginData.getUserName());
 
-        User user = userRepository.findByUserNameOrMail(loginData.getUserName(), loginData.getUserName())
-                .orElseThrow(() -> new HttpException("Not found", HttpStatus.NOT_FOUND));
+            if (user.isEmpty()) {
+                throw new HttpException("Not found", HttpStatus.NOT_FOUND);
+            }
 
-        if (!user.getActive()) throw new HttpException("Inactive user", HttpStatus.BAD_REQUEST);
+            boolean isValid = passwordEncoder.matches(loginData.getPassword(), user.get().getPassword());
 
-        return AuthResponseDTO.builder().token(jwtService.getToken(new SecurityUser(user))).build();
+            if(!isValid) {
+                throw new HttpException("Wrong credentials", HttpStatus.UNAUTHORIZED);
+            }
+
+            if (!user.get().getActive()) throw new HttpException("Inactive user", HttpStatus.BAD_REQUEST);
+
+            return AuthResponseDTO.builder()
+                    .token(jwtService.getToken(new SecurityUser(user.get())))
+                    .role(user.get().getRole())
+                    .build();
+        } catch (Exception e) {
+            throw new HttpException(e.getMessage(), HttpStatus.UNAUTHORIZED );
+        }
     }
 
     public AuthResponseDTO register(RegisterRequestDTO registerData) throws HttpException {
         User user = User.builder()
                 .mail(registerData.getMail())
                 .userName(registerData.getUserName())
+                .ownerId(registerData.getOwnerId())
+                .role(registerData.getRole())
                 .password(passwordEncoder.encode(registerData.getPassword()))
-                .active(false)
+                .active(true)
                 .build();
 
-        if (!isMailAvailable(registerData.getMail())) throw new HttpException("Email in use", HttpStatus.BAD_REQUEST);
+        if (!isMailAvailable(registerData.getMail(), registerData.getOwnerId())) throw new HttpException("Email in use for this owner", HttpStatus.BAD_REQUEST);
 
         this.userRepository.save(user);
 
         String jwt = jwtService.getToken(new SecurityUser(user));
 
-        this.kafkaTemplate.send("register-topic", JsonUtils.toJson(
-                new RegisterEvent(user.getId(), user.getMail(), "Registro", MailTemplate.getRegisterTemplate(jwt, user.getId()))
-        ));
-
-        return AuthResponseDTO.builder().token(jwt).build();
+        return AuthResponseDTO.builder().token(jwt).role(registerData.getRole()).build();
     }
 
-    private boolean isMailAvailable(String mail) {
-        return this.userRepository.findByMail(mail).isEmpty();
+    private boolean isMailAvailable(String mail, String ownerId) {
+        return this.userRepository.findByMailAndOwnerId(mail, ownerId).isEmpty();
     }
 
     public boolean verify(VerifyRequestDTO verifyData) throws HttpException {

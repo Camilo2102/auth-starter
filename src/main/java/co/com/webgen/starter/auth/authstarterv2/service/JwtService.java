@@ -24,6 +24,7 @@ public class JwtService {
     }
 
     private String getToken(HashMap<String,Object> extraClaims, SecurityUser user) {
+
         return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(user.getUsername())
@@ -46,7 +47,6 @@ public class JwtService {
     public String getUsernameFromToken(String token) {
         return getClaim(token, Claims::getSubject);
     }
-
 
     public <T> T getClaim(String token, Function<Claims, T> claimsResolver){
         final Claims claims = getAllClaims(token);

@@ -14,16 +14,17 @@ import java.util.List;
 @Builder
 @Entity(name = "users")
 public class User extends AuditSqlModel {
-
     private Boolean active;
 
-    @Column(unique = true)
     private String mail;
 
-    @Column(unique = true)
     private String userName;
 
     private String password;
+
+    private String ownerId;
+
+    private String role;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_authority",

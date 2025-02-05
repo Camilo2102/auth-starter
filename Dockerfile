@@ -1,15 +1,14 @@
-#
-# Build stage
-#
-FROM maven:3-openjdk-17 AS build
-COPY . .
-RUN mvn clean package -DskipTests
+# Use a base image with Java to run the JAR
+FROM openjdk:20
 
-#
-# Package stage
-#
-FROM openjdk:17-alpine
-COPY --from=build /target/auth-starter.jar auth-starter.jar
-# ENV PORT=8080
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy the pre-built JAR file from your local machine into the container
+COPY ./target/auth-starter.jar /app/auth-starter.jar
+
+# Expose port 8080 for the application
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","auth-starter.jar"]
+
+# Define the entry point to run the JAR file when the container starts
+ENTRYPOINT ["java", "-jar", "auth-starter.jar"]

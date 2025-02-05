@@ -1,6 +1,7 @@
 package co.com.webgen.starter.auth.authstarterv2.Jwt;
 
 import co.com.webgen.starter.auth.authstarterv2.model.User;
+import co.com.webgen.starter.auth.authstarterv2.repository.UserRepository;
 import co.com.webgen.starter.auth.authstarterv2.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -25,6 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
